@@ -22,7 +22,9 @@ class HashTable:
 
     def __init__(self, capacity):
         # Your code here
-
+        self.capacity = capacity
+        self.storage = [None] * capacity
+        self.items = 0
 
     def get_num_slots(self):
         """
@@ -35,7 +37,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
-
+        return len(self.storage)
 
     def get_load_factor(self):
         """
@@ -44,6 +46,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        return self.items / self.capacity
 
 
     def fnv1(self, key):
@@ -54,7 +57,12 @@ class HashTable:
         """
 
         # Your code here
+        hash = 14695981039346656037
+        for x in key:
+            hash = hash * 1099511628211
+            hash = hash ^ ord(x)
 
+        return hash
 
     def djb2(self, key):
         """
@@ -63,7 +71,11 @@ class HashTable:
         Implement this, and/or FNV-1.
         """
         # Your code here
-
+        hash = 5381
+        for x in key:
+            hash = (( hash << 5) + hash) + ord(x)
+        
+        return hash & 0xFFFFFFFF
 
     def hash_index(self, key):
         """
@@ -82,6 +94,16 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        for i, item in enumerate(self.storage):
+            if item and item.key == key:
+                self.storage[i].value = value
+                return
+        self.storage.append(HashTableEntry(key, value))
+        self.items += 1
+        print(f"{self.get_load_factor()}")
+        if self.get_load_factor() > 0.75:
+            print(f"Resizing from {self.capacity} to {self.capacity * 2}")
+            self.resize(self.capacity * 2)
 
 
     def delete(self, key):
@@ -93,6 +115,12 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        for i, item in enumerate(self.storage):
+            if item and item.key == key:
+                del self.storage[i]
+                self.items -= 1
+                return
+        print("Not in hash map")
 
 
     def get(self, key):
@@ -104,6 +132,10 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        for i, item in enumerate(self.storage):
+            if item and item.key == key:
+                return self.storage[i].value
+        return None
 
 
     def resize(self, new_capacity):
@@ -114,6 +146,13 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        oldStorage = self.storage
+        self.capacity = new_capacity
+        self.storage = [None] * new_capacity
+
+        for item in oldStorage:
+            if item:
+                self.put(item.key, item.value)
 
 
 
@@ -127,16 +166,27 @@ if __name__ == "__main__":
     ht.put("line_5", '"Beware the Jabberwock, my son!')
     ht.put("line_6", "The jaws that bite, the claws that catch!")
     ht.put("line_7", "Beware the Jubjub bird, and shun")
-    ht.put("line_8", 'The frumious Bandersnatch!"')
-    ht.put("line_9", "He took his vorpal sword in hand;")
-    ht.put("line_10", "Long time the manxome foe he sought--")
-    ht.put("line_11", "So rested he by the Tumtum tree")
-    ht.put("line_12", "And stood awhile in thought.")
+    # ht.put("line_8", 'The frumious Bandersnatch!"')
+    # ht.put("line_9", "He took his vorpal sword in hand;")
+    # ht.put("line_10", "Long time the manxome foe he sought--")
+    # ht.put("line_11", "So rested he by the Tumtum tree")
+    # ht.put("line_12", "And stood awhile in thought.")
+    # ht.put("line_6", "Random Text.")
+    # ht.put("line_13", "Random Text.")
+    # ht.put("line_14", "Random Text.")
+    # ht.put("line_15", "Random Text.")
+    # ht.put("line_16", "Random Text.")
+    # ht.put("line_17", "Random Text.")
+    # ht.put("line_18", "Random Text.")
+
+    # ht.delete("line_1")
+    # ht.delete("line_2")
+    # ht.delete("line_3")
 
     print("")
 
     # Test storing beyond capacity
-    for i in range(1, 13):
+    for i in range(1, ht.capacity + 1):
         print(ht.get(f"line_{i}"))
 
     # Test resizing
@@ -147,7 +197,7 @@ if __name__ == "__main__":
     print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
     # Test if data intact after resizing
-    for i in range(1, 13):
+    for i in range(1, ht.capacity + 1):
         print(ht.get(f"line_{i}"))
 
     print("")
