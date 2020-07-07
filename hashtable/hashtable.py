@@ -37,7 +37,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
-        return len(self.storage)
+        return(len(self.storage))
 
     def get_load_factor(self):
         """
@@ -94,17 +94,34 @@ class HashTable:
         Implement this.
         """
         # Your code here
-        for i, item in enumerate(self.storage):
-            if item and item.key == key:
-                self.storage[i].value = value
-                return
-        self.storage.append(HashTableEntry(key, value))
-        self.items += 1
-        print(f"{self.get_load_factor()}")
-        if self.get_load_factor() > 0.75:
-            print(f"Resizing from {self.capacity} to {self.capacity * 2}")
-            self.resize(self.capacity * 2)
+        # for i, item in enumerate(self.storage):
+        #     if item and item.key == key:
+        #         self.storage[i].value = value
+        #         return
+        # self.storage.append(HashTableEntry(key, value))
+        # self.items += 1
+        # print(f"{self.get_load_factor()}")
+        # if self.get_load_factor() > 0.75:
+        #     print(f"Resizing from {self.capacity} to {self.capacity * 2}")
+        #     self.resize(self.capacity * 2)
 
+
+        # With 2D array
+        key_hash = self.hash_index(key)
+        key_value = [key, value]
+
+        if self.storage[key_hash] is None:
+            self.storage[key_hash] = list([key_value])
+            self.items += 1
+        else:
+            for i in range(len(self.storage[key_hash])):
+                if self.storage[key_hash][i][0] == key:
+                    self.storage[key_hash][i][1] = value
+                    return
+            self.storage[key_hash].append(key_value)
+            self.items += 1
+        if self.get_load_factor() > 0.75:
+            self.resize(self.capacity * 2)
 
     def delete(self, key):
         """
@@ -115,12 +132,26 @@ class HashTable:
         Implement this.
         """
         # Your code here
-        for i, item in enumerate(self.storage):
-            if item and item.key == key:
-                del self.storage[i]
+        # for i, item in enumerate(self.storage):
+        #     if item and item.key == key:
+        #         del self.storage[i]
+        #         self.items -= 1
+        #         return
+        # print("Not in hash map")
+
+
+        # With 2D array
+        key_hash = self.hash_index(key)
+        print("deleting")
+        # if self.storage[key_hash] is None:
+        #     print("Not in hash map")
+        for i in range(0, len(self.storage[key_hash])):
+            print( self.storage[key_hash][i])
+            if self.storage[key_hash][i][0] == key:
+                del self.storage[key_hash][i]
                 self.items -= 1
                 return
-        print("Not in hash map")
+        # print("Not in hash map")
 
 
     def get(self, key):
@@ -132,9 +163,18 @@ class HashTable:
         Implement this.
         """
         # Your code here
-        for i, item in enumerate(self.storage):
-            if item and item.key == key:
-                return self.storage[i].value
+        # for i, item in enumerate(self.storage):
+        #     if item and item.key == key:
+        #         return self.storage[i].value
+        # return None
+
+
+        # With 2D array
+        key_hash = self.hash_index(key)
+        if self.storage[key_hash] is not None:
+            for pair in self.storage[key_hash]:
+                if pair[0] == key:
+                    return pair[1]
         return None
 
 
@@ -146,13 +186,24 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        # oldStorage = self.storage
+        # self.capacity = new_capacity
+        # self.storage = [None] * new_capacity
+
+        # for item in oldStorage:
+        #     if item:
+        #         self.put(item.key, item.value)
+
+
+        # With 2D array
         oldStorage = self.storage
         self.capacity = new_capacity
         self.storage = [None] * new_capacity
 
-        for item in oldStorage:
-            if item:
-                self.put(item.key, item.value)
+        for thing in oldStorage:
+            if thing:
+                for item in thing:
+                    self.put(item[0], item[1])
 
 
 
@@ -166,7 +217,7 @@ if __name__ == "__main__":
     ht.put("line_5", '"Beware the Jabberwock, my son!')
     ht.put("line_6", "The jaws that bite, the claws that catch!")
     ht.put("line_7", "Beware the Jubjub bird, and shun")
-    # ht.put("line_8", 'The frumious Bandersnatch!"')
+    ht.put("line_8", 'The frumious Bandersnatch!"')
     # ht.put("line_9", "He took his vorpal sword in hand;")
     # ht.put("line_10", "Long time the manxome foe he sought--")
     # ht.put("line_11", "So rested he by the Tumtum tree")
@@ -179,17 +230,17 @@ if __name__ == "__main__":
     # ht.put("line_17", "Random Text.")
     # ht.put("line_18", "Random Text.")
 
-    # ht.delete("line_1")
-    # ht.delete("line_2")
-    # ht.delete("line_3")
+    ht.delete("line_1")
+    ht.delete("line_2")
+    ht.delete("line_3")
 
-    print("")
+    # print("")
 
-    # Test storing beyond capacity
-    for i in range(1, ht.capacity + 1):
-        print(ht.get(f"line_{i}"))
+    # # Test storing beyond capacity
+    # for i in range(1, ht.capacity + 1):
+    #     print(ht.get(f"line_{i}"))
 
-    # Test resizing
+    # # Test resizing
     old_capacity = ht.get_num_slots()
     ht.resize(ht.capacity * 2)
     new_capacity = ht.get_num_slots()
