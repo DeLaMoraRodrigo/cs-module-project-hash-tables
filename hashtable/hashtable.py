@@ -184,10 +184,12 @@ class HashTable:
 
         if prev and prev.key == key:
             self.storage[key_hash] = prev.next
+            self.items -= 1
             return
         while cur:
             if cur.key == key:
                 prev.next = cur.next
+                self.items -= 1
                 return
             prev = prev.next
             cur = cur.next
