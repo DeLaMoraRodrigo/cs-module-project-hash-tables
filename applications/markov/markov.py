@@ -17,7 +17,7 @@ end_words = list()
 for i in range(len(split_words) - 1):
     if split_words[i][0] in capitals:
         start_words.append(split_words[i])
-    elif split_words[i][-1] in ends:
+    if split_words[i][-1] in ends:
         end_words.append(split_words[i])
     markov[split_words[i]] = markov.get(split_words[i], [])
     markov[split_words[i]].append(split_words[i + 1])
@@ -30,7 +30,7 @@ for i in range(5):
     sentence += start + " "
     new_word = random.choice(markov[start])
 
-    while True:
+    while start not in end_words:
         if new_word in end_words:
             sentence += new_word
             break
