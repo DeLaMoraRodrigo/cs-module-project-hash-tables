@@ -4,7 +4,7 @@ def word_count(s):
     words = s.split()
 
     for word in words:
-        lower_case = word.lower().translate({ord(i):None for i in '":;,.-+=/\|[]{}()*^&'})
+        lower_case = word.lower().translate({ord(i):None for i in '":;,.-+=/\\|[]{}()*^&'})
         if lower_case != '':
             count[lower_case] = count.get(lower_case, 0) + 1
 

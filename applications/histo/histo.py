@@ -1,5 +1,5 @@
 # Your code here
-ignored_characters = ['"', ':', ';', ',', '.', '-', '+', '=', '/', '\\', '|', '[', ']', '{', '}', '(', ')', '*', '^', '&']
+ignored_characters = ['"', ':', ';', ',', '.', '-', '+', '=', '/', '\\', '|', '[', ']', '{', '}', '(', ')', '*', '^', '&', '?', '!']
 
 
 def histogram():
@@ -15,18 +15,13 @@ def histogram():
                 histo += char
         word = histo.lower()
 
-        if word in counts:
-            counts[word] += 1
-        elif word == "" or word == " ":
-            break
-        else:
-            counts[word] = 1
+        if word != "":
+            counts[word] = counts.get(word, 0) + 1
 
     items = list(counts.items())
     items.sort(key = lambda e: e[1], reverse = True)
-    counts = (dict(items))
+    counts = dict(items)
     for (string, value) in counts.items():
         print(f'{string} {" " * (15 - len(string))} {"#" * value}')
-
 
 print(histogram())
